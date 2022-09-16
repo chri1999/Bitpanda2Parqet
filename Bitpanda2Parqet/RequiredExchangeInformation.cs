@@ -8,6 +8,8 @@ namespace Bitpanda2Parqet
 {
     public class RequiredExchangeInformation
     {
+        // An object of this class stores strings entered into the MainView textboxes
+
         public string API { get; set; }
         public string FilePath { get; set; }
         public string ParqetAcc { get; set; }

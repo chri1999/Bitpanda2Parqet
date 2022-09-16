@@ -8,6 +8,8 @@ namespace Bitpanda2Parqet
 {
     public class Activity
     {
+
+    // An object of this class represents a Bitpanda Transaction 
   
         public string transactionID { get; set; }
         public DateTime timestamp { get; set; }

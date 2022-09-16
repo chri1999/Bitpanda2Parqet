@@ -10,6 +10,9 @@ namespace Bitpanda2Parqet
 {
     public class ParqetApiResults
     {
+        // An object of this class contains statistical information about the via API uploaded Activities/Transactions to parqet 
+        // To Do: Check for other Api responds
+
         public int NumberOfSuccesses { get; set; }
         public int NumberOfDuplications { get; set; }
         public int NumberOfUnknownCoins { get;set; }
@@ -43,6 +46,10 @@ namespace Bitpanda2Parqet
                 NumberOfUnknownCoins++;
             }
             else if (jsonResponse["notCreatedActivities"].Count() == 1)
+            {
+                NumberOfFailures++;
+            }
+            else
             {
                 NumberOfFailures++;
             }

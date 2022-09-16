@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Bitpanda2Parqet
 {
+    // An object of this class contains statistical information about the downloaded Transactions from Bitpanda
+    // To Do: Check data more specifically
+
     public class BitpandaApiResults
     {
         public int NumberOfDataSets { get; set; }

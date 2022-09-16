@@ -12,6 +12,9 @@ namespace Bitpanda2Parqet
     public class MainViewPresenter
     {
 
+        // An object of this class manages the communication between the loaded data (DataModel) and the Form (MainView)
+        
+
         private MainView _mainView;
         private DataModel _dataModel;
         private BackgroundWorker _worker;
@@ -31,7 +34,7 @@ namespace Bitpanda2Parqet
             _mainView.ParquetExportRequested += new EventHandler<RequiredExchangeInformation>(OnParqetExportRequested);
             _mainView.ParquetSynchRequested += new EventHandler<RequiredExchangeInformation>(OnParqetSyncRequested);
             _mainView.LoadInitRequested += new EventHandler(OnLoadInitRequested);
-            _mainView.SaveInitRequested += new EventHandler<Initializer>(OnSaveInitRequested);
+            _mainView.SaveInitRequested += new EventHandler<FormInitializer>(OnSaveInitRequested);
             _worker.DoWork += new DoWorkEventHandler(OnDoWork);
             _worker.ProgressChanged += new ProgressChangedEventHandler(OnProgressChanged);
             _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OnRunWorkerCompleted);
@@ -57,12 +60,12 @@ namespace Bitpanda2Parqet
             _mainView.SetProgress(e.ProgressPercentage);
         }
 
-        private  void OnDoWork(object sender, DoWorkEventArgs e)
+        private void OnDoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
                 RequiredExchangeInformation info = (RequiredExchangeInformation)e.Argument;
-                DataExchanger.MakeParqetApiPost(_dataModel.activities, info.ParqetAcc, info.ParqetToken, _worker, _results).Wait();
+                DataExchanger.UploadDataToParqetAPI(_dataModel.activities, info.ParqetAcc, info.ParqetToken, _worker, _results).Wait();
                 MainView.ShowTextMessage(_results.ToString()); 
             }
             catch (Exception ex)
@@ -71,14 +74,14 @@ namespace Bitpanda2Parqet
             }          
         }
 
-        private void OnSaveInitRequested(object sender, Initializer e)
+        private void OnSaveInitRequested(object sender, FormInitializer e)
         {
-            Initializer.SaveInitValues(e);
+            FormInitializer.SaveInitValues(e);
         }
 
         private void OnLoadInitRequested(object sender, EventArgs e)
         {
-            _mainView.SetInitValues(Initializer.GetMainViewInitValues());
+            _mainView.SetInitValues(FormInitializer.GetMainViewInitValues());
         }
 
         private void OnParqetSyncRequested(object sender, RequiredExchangeInformation e)
@@ -87,7 +90,7 @@ namespace Bitpanda2Parqet
             {
                 if (!_worker.IsBusy)
                 {
-                    _dataModel.SetNewDataList(DataExchanger.LoadDataFromAPI(e.API, out BitpandaApiResults result));
+                    _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.API, out BitpandaApiResults result));
                     MainView.ShowTextMessage(result.ToString());
                     _worker.RunWorkerAsync(e);
                 }
@@ -102,7 +105,7 @@ namespace Bitpanda2Parqet
         {
             try
             {
-                _dataModel.SetNewDataList(DataExchanger.LoadDataFromAPI(e.API, out BitpandaApiResults result));
+                _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.API, out BitpandaApiResults result));
                 MainView.ShowTextMessage(result.ToString());
                 _dataModel.ExportParqetCSV(e.FilePath);
                 _mainView.SetProgress(100);
@@ -112,7 +115,6 @@ namespace Bitpanda2Parqet
             {
                 MainView.ShowErrorMessage("Fehler beim Laden der Daten!\n" + ex.Message);
             }
-
         }
 
     

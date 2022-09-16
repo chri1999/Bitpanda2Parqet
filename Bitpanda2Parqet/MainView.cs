@@ -17,10 +17,7 @@ namespace Bitpanda2Parqet
         public event EventHandler<RequiredExchangeInformation> ParquetExportRequested;
         public event EventHandler<RequiredExchangeInformation> ParquetSynchRequested;
         public event EventHandler LoadInitRequested;
-        public event EventHandler<Initializer> SaveInitRequested;
-
-
-
+        public event EventHandler<FormInitializer> SaveInitRequested;
 
         public MainView()
         {
@@ -92,7 +89,7 @@ namespace Bitpanda2Parqet
             }
         }
 
-        public void SetInitValues(Initializer init)
+        public void SetInitValues(FormInitializer init)
         {
             txbFileName.Text = init.FileName;
             txbFilePath.Text = init.FilePath;
@@ -103,7 +100,7 @@ namespace Bitpanda2Parqet
 
         private void btnSaveInitSettings_Click(object sender, EventArgs e)
         {
-            SaveInitRequested?.Invoke(sender, new Initializer(txbBitpandaAPI.Text, txbParqetAcc.Text, txbParqetToken.Text, txbFilePath.Text, txbFileName.Text));
+            SaveInitRequested?.Invoke(sender, new FormInitializer(txbBitpandaAPI.Text, txbParqetAcc.Text, txbParqetToken.Text, txbFilePath.Text, txbFileName.Text));
         }
 
         private void btnLoadInitSettings_Click(object sender, EventArgs e)

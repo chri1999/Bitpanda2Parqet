@@ -17,13 +17,15 @@ namespace Bitpanda2Parqet
 {
     public class DataExchanger
     {
+        // This class is used to to interact with the local filesystem and the Api's of Bitpanda and Parqet
+        // To Do: Improve parsing of Bitpanda data!! -> BitpandaJsonParse + ParseBitpandaTrade etc.
 
-        public static List<Activity> LoadDataFromAPI(string aPIKey, out BitpandaApiResults result)
+        public static List<Activity> DownloadDataFromBitpandaAPI(string aPIKey, out BitpandaApiResults result)
         {
             var records = new List<Activity>();
             try
             {
-                JObject bitPandaTrades = JObject.Parse(MakeBitPandaTradesCall(aPIKey));
+                JObject bitPandaTrades = JObject.Parse(MakeBitPandaTrasactionsCall(aPIKey));
 
                 records = BitpandaJsonParse(bitPandaTrades, out result);
             }
@@ -54,13 +56,13 @@ namespace Bitpanda2Parqet
             }
         }
 
-        public static async Task MakeParqetApiPost(List<Activity> activities, string parqetAcc, string parqetToken, BackgroundWorker worker, ParqetApiResults results)
+        public static async Task UploadDataToParqetAPI(List<Activity> activities, string parqetAcc, string parqetToken, BackgroundWorker worker, ParqetApiResults results)
         {
             try
             {
                 for (int i = 0; i < activities.Count; i++)
                 {
-                    var clientHandler = new HttpClientHandler
+                    var clientHandler = new HttpClientHandler       // Code from Insomnia
                     {
                         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
                     };
@@ -103,9 +105,6 @@ namespace Bitpanda2Parqet
             {
                 throw ex;
             }
-
-
-
         }
 
         private static List<Activity> BitpandaJsonParse(JObject jsonData, out BitpandaApiResults result)
@@ -170,7 +169,7 @@ namespace Bitpanda2Parqet
                                        "EUR",
                                        (double)obj["amount"],
                                        (string)obj["cryptocoin_symbol"],
-                                       0.0001,                             //price crypto
+                                       0.0001,                             //price crypto (example: Best Rewards, haven't yet found a way to add "crypto dividends" or price 0), needs to be edited though
                                        "EUR",
                                        "Cryptocurrency",
                                        (string)obj["cryptocoin_id"],
@@ -206,7 +205,7 @@ namespace Bitpanda2Parqet
                                        );
         }
 
-        private static string MakeBitPandaTradesCall(string API_KEY)
+        private static string MakeBitPandaTrasactionsCall(string API_KEY)       // max page size: 500, add page parameter for more datasets
         {
             var client = new WebClient();
             client.Headers.Add("X-API-KEY", API_KEY);

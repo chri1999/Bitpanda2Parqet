@@ -8,6 +8,8 @@ namespace Bitpanda2Parqet
 {
     public class DataModel
     {
+        // An object of this class contains a list Activities (Transactions) and methods to edit/work with the list
+
         public event EventHandler ModelChanged;
 
 
