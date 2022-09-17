@@ -212,5 +212,30 @@ namespace Bitpanda2Parqet
             return client.DownloadString("https://api.bitpanda.com/v1/wallets/transactions?page=1&page_size=500");
         }
 
+        private static string IdentifySortOfActivity(JToken obj)
+        {
+            string sortOfActivity = "undefined";
+            if (obj["attributes"]["type"].ToString() == "buy") sortOfActivity = "buy";
+
+            else if (obj["attributes"]["type"].ToString() == "sell") sortOfActivity = "sell";
+
+            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
+                     obj["attributes"]["in_or_out"].ToString() == "outgoing") sortOfActivity = "outgoingStake";
+
+            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
+                     obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingStake";
+
+            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Instant Trade Bonus" &&
+                     obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "instantTradeBonus";
+
+            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Reward" &&
+                     obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingReward";
+
+            else if (obj["attributes"]["type"].ToString() == "withdrawal" &&
+                     obj["attributes"]["is_bfc"].ToString() == "true") sortOfActivity = "bestFeeReduction";
+
+            return sortOfActivity;
+        }
+
     } 
 }
