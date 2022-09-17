@@ -44,23 +44,43 @@ namespace Bitpanda2Parqet
             for (int i = 0; i < jsonData["data"].Count(); i++)
             {
                 typeOfActivity = IdentifySortOfActivity(jsonData["data"][i]);
+                result.NumberOfDataSets++;
 
-                if (typeOfActivity == "buy" || typeOfActivity == "sell") records.Add(Activity.ParseBuyOrSell(jsonData["data"][i]["attributes"]));
-
-                else if (typeOfActivity == "outgoingStake" || typeOfActivity == "incomingStake") ; //records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"])); //ignore stakes
-
-                else if (typeOfActivity == "instantTradeBonus") records.Add(Activity.ParseInstantTradeBonus(jsonData["data"][i]["attributes"]));
-
-                else if (typeOfActivity == "incomingReward") records.Add(Activity.ParseReward(jsonData["data"][i]["attributes"]));
-
-                else if (typeOfActivity == "bestFeeReduction") ;    // To Do
-
-                else throw new Exception("Encountered an Unknown Transaction type");
-                
-                result.GetResultFromBitpandaDataResponse(jsonData["data"][i]);      // improve
+                if (typeOfActivity == "buy")
+                {
+                    records.Add(Activity.ParseBuyOrSell(jsonData["data"][i]["attributes"]));
+                    result.NumberOfBuys++;
+                }
+                else if (typeOfActivity == "sell")
+                {
+                    records.Add(Activity.ParseBuyOrSell(jsonData["data"][i]["attributes"]));
+                    result.NumberOfSells++;
+                }
+                else if (typeOfActivity == "outgoingStake" || typeOfActivity == "incomingStake")
+                {
+                    //records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"])); //ignore stakes
+                    result.NumberOfStakes++;
+                }
+                else if (typeOfActivity == "instantTradeBonus")
+                {
+                    records.Add(Activity.ParseInstantTradeBonus(jsonData["data"][i]["attributes"]));
+                    result.NumberOfBestBonuses++;
+                }
+                else if (typeOfActivity == "incomingReward")
+                {
+                    records.Add(Activity.ParseReward(jsonData["data"][i]["attributes"]));
+                    result.NumberOfBestBonuses++;
+                }
+                else if (typeOfActivity == "bestFeeReduction")
+                {
+                    records.Add(Activity.ParseBestFeeReduction(jsonData["data"][i]["attributes"]));
+                    result.NumberOfBestBonuses++;
+                }
+                else
+                {
+                    result.NumberOfUnknownCalls++;  // add errorlog 
+                }               
             }
-
-
             return records;
         }
 

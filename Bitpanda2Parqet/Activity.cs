@@ -92,7 +92,7 @@ namespace Bitpanda2Parqet
         public static Activity ParseStake(JToken obj)
         {
             string type = "";
-            double price = 0.0001;      // yet no way to add dividends or set price to 0
+            double price = 0.001;      // yet no way to add dividends or set price to 0
             if ((string)obj["in_or_out"] == "incoming") type = "buy";
             else type = "sell";
 
@@ -125,10 +125,31 @@ namespace Bitpanda2Parqet
             return ParseStake(obj);
         }
 
-        //public static Activity ParseBestFeeReduction(JToken obj)
-        //{
-        //    // to do
-        //}
+        public static Activity ParseBestFeeReduction(JToken obj)
+        {
+            string type = "";
+            double price = 0.001;      // yet no way to add dividends or set price to 0
+            if ((string)obj["in_or_out"] == "incoming") type = "buy";
+            else type = "sell";
+
+            return new Activity((string)obj["id"],
+                                       DateTime.ParseExact((string)obj["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
+                                       type,
+                                       (string)obj["in_or_out"],
+                                       (double)obj["amount_eur"],
+                                       "EUR",
+                                       (double)obj["fee"],
+                                       (string)obj["cryptocoin_symbol"],
+                                       price,
+                                       "EUR",
+                                       "Cryptocurrency",
+                                       (string)obj["cryptocoin_id"],
+                                       0,
+                                       "EUR",
+                                       "",
+                                       "EUR"
+                                       );
+        }
     }
 
 
