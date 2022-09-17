@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,6 +67,68 @@ namespace Bitpanda2Parqet
                 );
             return dataString;
         }
+
+        public static Activity ParseBuyOrSell(JToken obj)
+        {
+            return new Activity((string)obj["trade"]["id"],
+                           DateTime.ParseExact((string)obj["trade"]["attributes"]["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
+                           (string)obj["trade"]["attributes"]["type"],
+                           "",
+                           (double)obj["trade"]["attributes"]["amount_fiat"],
+                           "EUR",
+                           (double)obj["trade"]["attributes"]["amount_cryptocoin"],
+                           (string)obj["trade"]["attributes"]["cryptocoin_symbol"],
+                           (double)obj["trade"]["attributes"]["price"],
+                           "EUR",
+                           "Cryptocurrency",
+                           (string)obj["trade"]["attributes"]["cryptocoin_id"],
+                           0,
+                           "EUR",
+                           "",
+                           "EUR"
+                           );
+        }
+
+        public static Activity ParseStake(JToken obj)
+        {
+            string type = "";
+            double price = 0.0001;      // yet no way to add dividends or set price to 0
+            if ((string)obj["in_or_out"] == "incoming") type = "buy";
+            else type = "sell";
+
+            return new Activity((string)obj["id"],
+                                       DateTime.ParseExact((string)obj["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
+                                       type,
+                                       (string)obj["in_or_out"],
+                                       (double)obj["amount_eur"],
+                                       "EUR",
+                                       (double)obj["amount"],
+                                       (string)obj["cryptocoin_symbol"],
+                                       price,                             
+                                       "EUR",
+                                       "Cryptocurrency",
+                                       (string)obj["cryptocoin_id"],
+                                       0,
+                                       "EUR",
+                                       "",
+                                       "EUR"
+                                       );
+        }
+
+        public static Activity ParseReward(JToken obj)
+        {
+            return ParseStake(obj);
+        }
+
+        public static Activity ParseInstantTradeBonus(JToken obj)
+        {
+            return ParseStake(obj);
+        }
+
+        //public static Activity ParseBestFeeReduction(JToken obj)
+        //{
+        //    // to do
+        //}
     }
 
 
