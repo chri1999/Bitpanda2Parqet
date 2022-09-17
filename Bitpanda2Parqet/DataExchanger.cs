@@ -27,12 +27,40 @@ namespace Bitpanda2Parqet
             {
                 JObject bitPandaTrades = JObject.Parse(MakeBitPandaTrasactionsCall(aPIKey));
 
-                records = BitpandaJsonParse(bitPandaTrades, out result);
+                records = ParseActivitiesFromJson(bitPandaTrades, out result);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message + "\nBitpanda API kontrollieren!");
             }
+            return records;
+        }
+
+        private static List<Activity> ParseActivitiesFromJson(JObject jsonData, out BitpandaApiResults result)
+        {
+            string typeOfActivity = "";
+            result = new BitpandaApiResults(0, 0, 0, 0, 0, 0);
+            var records = new List<Activity>();
+            for (int i = 0; i < jsonData["data"].Count(); i++)
+            {
+                typeOfActivity = IdentifySortOfActivity(jsonData["data"][i]);
+
+                if (typeOfActivity == "buy" || typeOfActivity == "sell") records.Add(Activity.ParseBuyOrSell(jsonData["data"][i]["attributes"]));
+
+                else if (typeOfActivity == "outgoingStake" || typeOfActivity == "incomingStake") ; //records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"])); //ignore stakes
+
+                else if (typeOfActivity == "instantTradeBonus") records.Add(Activity.ParseInstantTradeBonus(jsonData["data"][i]["attributes"]));
+
+                else if (typeOfActivity == "incomingReward") records.Add(Activity.ParseReward(jsonData["data"][i]["attributes"]));
+
+                else if (typeOfActivity == "bestFeeReduction") ;    // To Do
+
+                else throw new Exception("Encountered an Unknown Transaction type");
+                
+                result.GetResultFromBitpandaDataResponse(jsonData["data"][i]);      // improve
+            }
+
+
             return records;
         }
 
@@ -107,104 +135,6 @@ namespace Bitpanda2Parqet
             }
         }
 
-        private static List<Activity> BitpandaJsonParse(JObject jsonData, out BitpandaApiResults result)
-        {
-            result = new BitpandaApiResults(0,0,0,0,0,0);
-            var records = new List<Activity>();
-            for (int i = 0; i < jsonData["data"].Count(); i++)
-            {
-                if ((jsonData["data"][i]["attributes"]["type"].ToString() == "buy") ||
-                    (jsonData["data"][i]["attributes"]["type"].ToString() == "sell"))
-                {
-                    records.Add(ParseBitpandaTrade(jsonData["data"][i]["attributes"]["trade"]));
-                }
-                else if ((jsonData["data"][i]["attributes"]["type"].ToString() == "transfer") &&
-                         (jsonData["data"][i]["attributes"]["tags"][0]["attributes"]["name"].ToString() != "Stake"))  // ignore outgoing staked coins, Best rewards should be ok
-                {
-                    records.Add(ParseBitpandaTransaction(jsonData["data"][i]["attributes"]));
-                }
-                else if ((jsonData["data"][i]["attributes"]["type"].ToString() == "withdrawal"))
-                {
-                    records.Add(ParseBitpandaWithdrawal(jsonData["data"][i]["attributes"]));
-                }
-                result.GetResultFromBitpandaDataResponse(jsonData["data"][i]);
-                
-            }
-
-            return records;
-        }
-
-        private static Activity ParseBitpandaTrade(JToken obj)
-        {
-            return new Activity((string)obj["id"],
-                                       DateTime.ParseExact((string)obj["attributes"]["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
-                                       (string)obj["attributes"]["type"],
-                                       "",
-                                       (double)obj["attributes"]["amount_fiat"],
-                                       "EUR",
-                                       (double)obj["attributes"]["amount_cryptocoin"],
-                                       (string)obj["attributes"]["cryptocoin_symbol"],
-                                       (double)obj["attributes"]["price"],
-                                       "EUR",
-                                       "Cryptocurrency",
-                                       (string)obj["attributes"]["cryptocoin_id"],
-                                       0,
-                                       "EUR",
-                                       "",
-                                       "EUR"
-                                       );
-        }
-
-        private static Activity ParseBitpandaTransaction(JToken obj)
-        {
-            string type = "";
-            if ((string)obj["in_or_out"] == "incoming") type = "buy";
-            else type = "sell";
-
-            return new Activity((string)obj["id"],
-                                       DateTime.ParseExact((string)obj["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
-                                       type,         
-                                       (string)obj["in_or_out"],
-                                       (double)obj["amount_eur"],
-                                       "EUR",
-                                       (double)obj["amount"],
-                                       (string)obj["cryptocoin_symbol"],
-                                       0.0001,                             //price crypto (example: Best Rewards, haven't yet found a way to add "crypto dividends" or price 0), needs to be edited though
-                                       "EUR",
-                                       "Cryptocurrency",
-                                       (string)obj["cryptocoin_id"],
-                                       0,
-                                       "EUR",
-                                       "",
-                                       "EUR"
-                                       );
-        }
-
-        private static Activity ParseBitpandaWithdrawal(JToken obj)
-        {
-            string type = "";
-            if ((string)obj["in_or_out"] == "incoming") type = "buy";
-            else type = "sell";
-
-            return new Activity((string)obj["id"],
-                                       DateTime.ParseExact((string)obj["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
-                                       type,
-                                       (string)obj["in_or_out"],
-                                       (double)obj["amount_eur"],
-                                       "EUR",
-                                       (double)obj["amount"],
-                                       (string)obj["cryptocoin_symbol"],
-                                       0.0001,                             //price crypto
-                                       "EUR",
-                                       "Cryptocurrency",
-                                       (string)obj["cryptocoin_id"],
-                                       0,
-                                       "EUR",
-                                       "",
-                                       "EUR"
-                                       );
-        }
-
         private static string MakeBitPandaTrasactionsCall(string API_KEY)       // max page size: 500, add page parameter for more datasets
         {
             var client = new WebClient();
@@ -215,27 +145,137 @@ namespace Bitpanda2Parqet
         private static string IdentifySortOfActivity(JToken obj)
         {
             string sortOfActivity = "undefined";
-            if (obj["attributes"]["type"].ToString() == "buy") sortOfActivity = "buy";
+
+            if (obj["attributes"]["type"].ToString() == "withdrawal" &&
+                obj["attributes"]["is_bfc"].ToString() == "True") sortOfActivity = "bestFeeReduction";
+
+            else if (obj["attributes"]["type"].ToString() == "buy") sortOfActivity = "buy";
 
             else if (obj["attributes"]["type"].ToString() == "sell") sortOfActivity = "sell";
 
-            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
-                     obj["attributes"]["in_or_out"].ToString() == "outgoing") sortOfActivity = "outgoingStake";
+            if (obj["attributes"]["tags"].Count() > 0)
+            {
+                if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
+                         obj["attributes"]["in_or_out"].ToString() == "outgoing") sortOfActivity = "outgoingStake";
 
-            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
-                     obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingStake";
+                else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
+                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingStake";
 
-            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Instant Trade Bonus" &&
-                     obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "instantTradeBonus";
+                else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Instant Trade Bonus" &&
+                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "instantTradeBonus";
 
-            else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Reward" &&
-                     obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingReward";
+                else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Reward" &&
+                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingReward";
+            }
 
-            else if (obj["attributes"]["type"].ToString() == "withdrawal" &&
-                     obj["attributes"]["is_bfc"].ToString() == "true") sortOfActivity = "bestFeeReduction";
+
 
             return sortOfActivity;
         }
+
+
+
+        // old Parse methods
+
+        //private static List<Activity> BitpandaJsonParse(JObject jsonData, out BitpandaApiResults result)
+        //{
+        //    result = new BitpandaApiResults(0,0,0,0,0,0);
+        //    var records = new List<Activity>();
+        //    for (int i = 0; i < jsonData["data"].Count(); i++)
+        //    {
+        //        if ((jsonData["data"][i]["attributes"]["type"].ToString() == "buy") ||
+        //            (jsonData["data"][i]["attributes"]["type"].ToString() == "sell"))
+        //        {
+        //            records.Add(ParseBitpandaTrade(jsonData["data"][i]["attributes"]["trade"]));
+        //        }
+        //        else if ((jsonData["data"][i]["attributes"]["type"].ToString() == "transfer") &&
+        //                 (jsonData["data"][i]["attributes"]["tags"][0]["attributes"]["name"].ToString() != "Stake"))  // ignore outgoing staked coins, Best rewards should be ok
+        //        {
+        //            records.Add(ParseBitpandaTransaction(jsonData["data"][i]["attributes"]));
+        //        }
+        //        else if ((jsonData["data"][i]["attributes"]["type"].ToString() == "withdrawal"))
+        //        {
+        //            records.Add(ParseBitpandaWithdrawal(jsonData["data"][i]["attributes"]));
+        //        }
+        //        result.GetResultFromBitpandaDataResponse(jsonData["data"][i]);
+
+        //    }
+
+        //    return records;
+        //}
+
+        //private static Activity ParseBitpandaTrade(JToken obj)
+        //{
+        //    return new Activity((string)obj["id"],
+        //                               DateTime.ParseExact((string)obj["attributes"]["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
+        //                               (string)obj["attributes"]["type"],
+        //                               "",
+        //                               (double)obj["attributes"]["amount_fiat"],
+        //                               "EUR",
+        //                               (double)obj["attributes"]["amount_cryptocoin"],
+        //                               (string)obj["attributes"]["cryptocoin_symbol"],
+        //                               (double)obj["attributes"]["price"],
+        //                               "EUR",
+        //                               "Cryptocurrency",
+        //                               (string)obj["attributes"]["cryptocoin_id"],
+        //                               0,
+        //                               "EUR",
+        //                               "",
+        //                               "EUR"
+        //                               );
+        //}
+
+        //private static Activity ParseBitpandaTransaction(JToken obj)
+        //{
+        //    string type = "";
+        //    if ((string)obj["in_or_out"] == "incoming") type = "buy";
+        //    else type = "sell";
+
+        //    return new Activity((string)obj["id"],
+        //                               DateTime.ParseExact((string)obj["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
+        //                               type,         
+        //                               (string)obj["in_or_out"],
+        //                               (double)obj["amount_eur"],
+        //                               "EUR",
+        //                               (double)obj["amount"],
+        //                               (string)obj["cryptocoin_symbol"],
+        //                               0.0001,                             //price crypto (example: Best Rewards, haven't yet found a way to add "crypto dividends" or price 0), needs to be edited though
+        //                               "EUR",
+        //                               "Cryptocurrency",
+        //                               (string)obj["cryptocoin_id"],
+        //                               0,
+        //                               "EUR",
+        //                               "",
+        //                               "EUR"
+        //                               );
+        //}
+
+        //private static Activity ParseBitpandaWithdrawal(JToken obj)
+        //{
+        //    string type = "";
+        //    if ((string)obj["in_or_out"] == "incoming") type = "buy";
+        //    else type = "sell";
+
+        //    return new Activity((string)obj["id"],
+        //                               DateTime.ParseExact((string)obj["time"]["date_iso8601"], "MM/dd/yyyy HH:mm:ss", null),
+        //                               type,
+        //                               (string)obj["in_or_out"],
+        //                               (double)obj["amount_eur"],
+        //                               "EUR",
+        //                               (double)obj["amount"],
+        //                               (string)obj["cryptocoin_symbol"],
+        //                               0.0001,                             //price crypto
+        //                               "EUR",
+        //                               "Cryptocurrency",
+        //                               (string)obj["cryptocoin_id"],
+        //                               0,
+        //                               "EUR",
+        //                               "",
+        //                               "EUR"
+        //                               );
+        //}
+
+
 
     } 
 }
