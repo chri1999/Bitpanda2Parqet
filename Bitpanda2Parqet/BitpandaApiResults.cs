@@ -82,8 +82,8 @@ namespace Bitpanda2Parqet
 
         public override string ToString()
         {
-            return "Number of Datasets: " + NumberOfDataSets +
-                "\nNumber of Buys: " + NumberOfBuys +
+            return "Number of Datasets: " + NumberOfDataSets + ", where:" +
+                "\n\nNumber of Buys: " + NumberOfBuys +
                 "\nNumber of Sells: " + NumberOfSells +
                 "\nNumber of Stakes: " + NumberOfStakes +
                 "\nNumber of Rewards or Best Bonuses: " + NumberOfBestBonuses +
