@@ -34,7 +34,7 @@ namespace Bitpanda2Parqet
             _mainView.ParquetExportRequested += new EventHandler<MainViewParameters>(OnParqetExportRequested);
             _mainView.ParquetSynchRequested += new EventHandler<MainViewParameters>(OnParqetSyncRequested);
             _mainView.LoadInitRequested += new EventHandler(OnLoadInitRequested);
-            _mainView.SaveInitRequested += new EventHandler<FormInitializer>(OnSaveInitRequested);
+            _mainView.SaveInitRequested += new EventHandler<MainViewParameters>(OnSaveInitRequested);
             _worker.DoWork += new DoWorkEventHandler(OnDoWork);
             _worker.ProgressChanged += new ProgressChangedEventHandler(OnProgressChanged);
             _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OnRunWorkerCompleted);
@@ -74,14 +74,14 @@ namespace Bitpanda2Parqet
             }          
         }
 
-        private void OnSaveInitRequested(object sender, FormInitializer e)
+        private void OnSaveInitRequested(object sender, MainViewParameters e)
         {
             FormInitializer.SaveInitValues(e);
         }
 
         private void OnLoadInitRequested(object sender, EventArgs e)
         {
-            _mainView.SetInitValues(FormInitializer.GetMainViewInitValues());
+            _mainView.SetInitValues(FormInitializer.ReadMainViewInitValues());
         }
 
         private void OnParqetSyncRequested(object sender, MainViewParameters e)

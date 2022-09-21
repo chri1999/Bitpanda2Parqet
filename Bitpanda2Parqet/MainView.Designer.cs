@@ -48,12 +48,12 @@
             this.tabTabs = new System.Windows.Forms.TabControl();
             this.tabPageSync = new System.Windows.Forms.TabPage();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.clbGenerellSettings = new System.Windows.Forms.CheckedListBox();
             this.cbxExportFormat = new System.Windows.Forms.ComboBox();
             this.dtpDataFromDate = new System.Windows.Forms.DateTimePicker();
+            this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.clbGenerellSettings = new System.Windows.Forms.CheckedListBox();
             this.tabTabs.SuspendLayout();
             this.tabPageSync.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
@@ -262,13 +262,22 @@
             this.tabPageSettings.Text = "Settings";
             this.tabPageSettings.UseVisualStyleBackColor = true;
             // 
+            // clbGenerellSettings
+            // 
+            this.clbGenerellSettings.FormattingEnabled = true;
+            this.clbGenerellSettings.Items.AddRange(new object[] {
+            "Staking ignorieren"});
+            this.clbGenerellSettings.Location = new System.Drawing.Point(312, 74);
+            this.clbGenerellSettings.Name = "clbGenerellSettings";
+            this.clbGenerellSettings.Size = new System.Drawing.Size(297, 304);
+            this.clbGenerellSettings.TabIndex = 6;
+            // 
             // cbxExportFormat
             // 
             this.cbxExportFormat.FormattingEnabled = true;
             this.cbxExportFormat.Items.AddRange(new object[] {
-            Enums.ExportFormat.Parqet,
-            Enums.ExportFormat.PortfolioPerformance});
-            this.cbxExportFormat.SelectedIndex = 0;
+            Bitpanda2Parqet.Enums.ExportFormat.Parqet,
+            Bitpanda2Parqet.Enums.ExportFormat.PortfolioPerformance});
             this.cbxExportFormat.Location = new System.Drawing.Point(50, 74);
             this.cbxExportFormat.Name = "cbxExportFormat";
             this.cbxExportFormat.Size = new System.Drawing.Size(121, 21);
@@ -280,6 +289,15 @@
             this.dtpDataFromDate.Name = "dtpDataFromDate";
             this.dtpDataFromDate.Size = new System.Drawing.Size(200, 20);
             this.dtpDataFromDate.TabIndex = 4;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(309, 44);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(93, 13);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "div. Einstellungen:";
             // 
             // label7
             // 
@@ -298,25 +316,6 @@
             this.label6.Size = new System.Drawing.Size(72, 13);
             this.label6.TabIndex = 1;
             this.label6.Text = "Export Format";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(309, 44);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(93, 13);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "div. Einstellungen:";
-            // 
-            // clbGenerellSettings
-            // 
-            this.clbGenerellSettings.FormattingEnabled = true;
-            this.clbGenerellSettings.Items.AddRange(new object[] {
-            "Staking ignorieren"});
-            this.clbGenerellSettings.Location = new System.Drawing.Point(312, 74);
-            this.clbGenerellSettings.Name = "clbGenerellSettings";
-            this.clbGenerellSettings.Size = new System.Drawing.Size(297, 304);
-            this.clbGenerellSettings.TabIndex = 6;
             // 
             // MainView
             // 

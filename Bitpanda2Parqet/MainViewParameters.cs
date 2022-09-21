@@ -12,6 +12,7 @@ namespace Bitpanda2Parqet
 
         public string API { get; set; }
         public string FilePath { get; set; }
+        public string FileName { get; set; }
         public string ParqetAcc { get; set; }
         public string ParqetToken { get; set; }
         public Enums.ExportFormat ExportFormat { get; set; }
@@ -19,7 +20,7 @@ namespace Bitpanda2Parqet
         public bool IgnoreStaking { get; set; }
 
 
-        public MainViewParameters(string aPI, string filePath, string parqetAcc, string parqetToken, Enums.ExportFormat exportFormat, DateTime dateOfOldestData, bool ignoreStaking)
+        public MainViewParameters(string aPI, string filePath,string fileName, string parqetAcc, string parqetToken, Enums.ExportFormat exportFormat, DateTime dateOfOldestData, bool ignoreStaking)
         {
             API = aPI;
             FilePath = filePath;
@@ -28,6 +29,7 @@ namespace Bitpanda2Parqet
             ExportFormat = exportFormat;
             DateOfOldestData = dateOfOldestData;
             IgnoreStaking = ignoreStaking;
+            FileName = fileName;
         }
 
     }

@@ -17,7 +17,7 @@ namespace Bitpanda2Parqet
         public event EventHandler<MainViewParameters> ParquetExportRequested;
         public event EventHandler<MainViewParameters> ParquetSynchRequested;
         public event EventHandler LoadInitRequested;
-        public event EventHandler<FormInitializer> SaveInitRequested;
+        public event EventHandler<MainViewParameters> SaveInitRequested;
 
         public MainView()
         {
@@ -89,19 +89,23 @@ namespace Bitpanda2Parqet
             }
         }
 
-        public void SetInitValues(FormInitializer init)
+        public void SetInitValues(MainViewParameters init)
         {
             txbFileName.Text = init.FileName;
             txbFilePath.Text = init.FilePath;
-            txbBitpandaAPI.Text = init.BitpandaApi;
+            txbBitpandaAPI.Text = init.API;
             txbParqetAcc.Text = init.ParqetAcc;
             txbParqetToken.Text = init.ParqetToken;
+            cbxExportFormat.SelectedItem = init.ExportFormat;
+            dtpDataFromDate.Value = init.DateOfOldestData;
+            clbGenerellSettings.SetItemChecked(0, init.IgnoreStaking);
         }
 
         private MainViewParameters GetMainViewParameters()
         { 
         return new MainViewParameters(txbBitpandaAPI.Text,
-            txbFilePath.Text + @"\" + txbFileName.Text,
+            txbFilePath.Text,
+            txbFileName.Text,
             txbParqetAcc.Text,
             txbParqetToken.Text,
             (Enums.ExportFormat)cbxExportFormat.SelectedItem,
@@ -111,7 +115,7 @@ namespace Bitpanda2Parqet
 
         private void btnSaveInitSettings_Click(object sender, EventArgs e)
         {
-            SaveInitRequested?.Invoke(sender, new FormInitializer(txbBitpandaAPI.Text, txbParqetAcc.Text, txbParqetToken.Text, txbFilePath.Text, txbFileName.Text));
+            SaveInitRequested?.Invoke(sender, GetMainViewParameters());
         }
 
         private void btnLoadInitSettings_Click(object sender, EventArgs e)
