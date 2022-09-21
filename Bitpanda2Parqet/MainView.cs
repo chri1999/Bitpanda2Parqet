@@ -14,8 +14,8 @@ namespace Bitpanda2Parqet
 {
     public partial class MainView : Form
     {
-        public event EventHandler<RequiredExchangeInformation> ParquetExportRequested;
-        public event EventHandler<RequiredExchangeInformation> ParquetSynchRequested;
+        public event EventHandler<MainViewParameters> ParquetExportRequested;
+        public event EventHandler<MainViewParameters> ParquetSynchRequested;
         public event EventHandler LoadInitRequested;
         public event EventHandler<FormInitializer> SaveInitRequested;
 
@@ -41,7 +41,7 @@ namespace Bitpanda2Parqet
             }
             else
             {
-                ParquetExportRequested?.Invoke(this, new RequiredExchangeInformation(txbBitpandaAPI.Text, txbFilePath.Text+ @"\" + txbFileName.Text, txbParqetAcc.Text, txbParqetToken.Text));
+                ParquetExportRequested?.Invoke(this, GetMainViewParameters());
             }
 
         }
@@ -85,7 +85,7 @@ namespace Bitpanda2Parqet
             }
             else
             {
-                ParquetSynchRequested?.Invoke(this, new RequiredExchangeInformation(txbBitpandaAPI.Text, string.Empty, txbParqetAcc.Text, txbParqetToken.Text));
+                ParquetSynchRequested?.Invoke(this, GetMainViewParameters());
             }
         }
 
@@ -96,6 +96,17 @@ namespace Bitpanda2Parqet
             txbBitpandaAPI.Text = init.BitpandaApi;
             txbParqetAcc.Text = init.ParqetAcc;
             txbParqetToken.Text = init.ParqetToken;
+        }
+
+        private MainViewParameters GetMainViewParameters()
+        { 
+        return new MainViewParameters(txbBitpandaAPI.Text,
+            txbFilePath.Text + @"\" + txbFileName.Text,
+            txbParqetAcc.Text,
+            txbParqetToken.Text,
+            (Enums.ExportFormat)cbxExportFormat.SelectedItem,
+            dtpDataFromDate.Value,
+            clbGenerellSettings.GetItemCheckState(0) == CheckState.Checked);
         }
 
         private void btnSaveInitSettings_Click(object sender, EventArgs e)

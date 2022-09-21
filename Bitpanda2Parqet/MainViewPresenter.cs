@@ -31,8 +31,8 @@ namespace Bitpanda2Parqet
             _worker.WorkerReportsProgress = true;
             _worker.WorkerSupportsCancellation = true;
 
-            _mainView.ParquetExportRequested += new EventHandler<RequiredExchangeInformation>(OnParqetExportRequested);
-            _mainView.ParquetSynchRequested += new EventHandler<RequiredExchangeInformation>(OnParqetSyncRequested);
+            _mainView.ParquetExportRequested += new EventHandler<MainViewParameters>(OnParqetExportRequested);
+            _mainView.ParquetSynchRequested += new EventHandler<MainViewParameters>(OnParqetSyncRequested);
             _mainView.LoadInitRequested += new EventHandler(OnLoadInitRequested);
             _mainView.SaveInitRequested += new EventHandler<FormInitializer>(OnSaveInitRequested);
             _worker.DoWork += new DoWorkEventHandler(OnDoWork);
@@ -64,7 +64,7 @@ namespace Bitpanda2Parqet
         {
             try
             {
-                RequiredExchangeInformation info = (RequiredExchangeInformation)e.Argument;
+                MainViewParameters info = (MainViewParameters)e.Argument;
                 DataExchanger.UploadDataToParqetAPI(_dataModel.activities, info.ParqetAcc, info.ParqetToken, _worker, _results).Wait();
                 MainView.ShowTextMessage(_results.ToString()); 
             }
@@ -84,7 +84,7 @@ namespace Bitpanda2Parqet
             _mainView.SetInitValues(FormInitializer.GetMainViewInitValues());
         }
 
-        private void OnParqetSyncRequested(object sender, RequiredExchangeInformation e)
+        private void OnParqetSyncRequested(object sender, MainViewParameters e)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace Bitpanda2Parqet
             }
         }
 
-        private void OnParqetExportRequested(object sender, RequiredExchangeInformation e)
+        private void OnParqetExportRequested(object sender, MainViewParameters e)
         {
             try
             {
