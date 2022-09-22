@@ -58,7 +58,8 @@ namespace Bitpanda2Parqet
                 }
                 else if (typeOfActivity == "outgoingStake" || typeOfActivity == "incomingStake")
                 {
-                    //records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"])); //ignore stakes
+                    records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"]));
+                    records[i].isStaking = true;
                     result.NumberOfStakes++;
                 }
                 else if (typeOfActivity == "instantTradeBonus")
@@ -84,10 +85,11 @@ namespace Bitpanda2Parqet
             return records;
         }
 
-        public static void ExportParquetCSV(List<Activity> activities, string filePath)
+        public static void ExportParquetCSV(List<Activity> activities, string filePath, string fileName)
         {
             try
             {
+                filePath = filePath + @"\" + fileName;
                 if (!filePath.EndsWith(".csv")) filePath += ".csv";
 
                 StreamWriter writer = new StreamWriter(filePath);

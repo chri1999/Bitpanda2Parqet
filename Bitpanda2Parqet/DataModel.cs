@@ -13,23 +13,39 @@ namespace Bitpanda2Parqet
         public event EventHandler ModelChanged;
 
 
-        public List<Activity> activities { get; private set; }
+        private List<Activity> _activities;
 
         public DataModel(List<Activity> listOfActivities)
         {
-            this.activities = listOfActivities;
+            this._activities = listOfActivities;
         }
 
 
         public void SetNewDataList(List<Activity> newDataList)
         {
-            activities = newDataList;           
+            _activities = newDataList;           
             ModelChanged?.Invoke(this, new EventArgs());
         }
 
-        public void ExportParqetCSV(string filePath)
+        public void ExportParqetCSV(MainViewParameters parameters)
         {
-            DataExchanger.ExportParquetCSV(activities, filePath);
+            DataExchanger.ExportParquetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
+        }
+
+        public List<Activity> GetFilteredActivityList(MainViewSettingsParameters settings)
+        {
+            List<Activity> filtered = new List<Activity>();
+
+            filtered.AddRange(
+            from n in _activities
+            where
+            n.timestamp > settings.DateOfOldestData &&
+            ((settings.IgnoreStaking == true && n.isStaking == false) ||
+            settings.IgnoreStaking == false)
+            select n);
+
+
+            return filtered;
         }
 
 

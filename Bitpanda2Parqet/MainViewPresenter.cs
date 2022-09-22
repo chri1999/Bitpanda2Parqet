@@ -65,7 +65,7 @@ namespace Bitpanda2Parqet
             try
             {
                 MainViewParameters info = (MainViewParameters)e.Argument;
-                DataExchanger.UploadDataToParqetAPI(_dataModel.activities, info.Sync.ParqetAcc, info.Sync.ParqetToken, _worker, _results).Wait();
+                DataExchanger.UploadDataToParqetAPI(_dataModel.GetFilteredActivityList(info.Settings), info.Sync.ParqetAcc, info.Sync.ParqetToken, _worker, _results).Wait();
                 MainView.ShowTextMessage(_results.ToString()); 
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace Bitpanda2Parqet
             {
                 _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.Sync.API, out BitpandaApiResults result));
                 MainView.ShowTextMessage(result.ToString());
-                _dataModel.ExportParqetCSV(e.Sync.FilePath);
+                _dataModel.ExportParqetCSV(e);
                 _mainView.SetProgress(100);
                 MainView.ShowTextMessage("Laden abgeschlossen!");
             }

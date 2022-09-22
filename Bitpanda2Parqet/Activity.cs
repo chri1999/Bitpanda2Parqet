@@ -28,6 +28,7 @@ namespace Bitpanda2Parqet
         public string feeAsset { get; set; }
         public string spread { get; set; }
         public string spreadCurrency { get; set; }
+        public bool isStaking { get; set; }
 
         public Activity(string transactionID, DateTime timestamp, string transactionType, string inOut, double amountFiat, string fiat, double amountAsset, string asset, double assetMarketPrice, string assetMarketCurrency, string assetClass, string productId, double fee, string feeAsset, string spread, string spreadCurrency)
         {
@@ -47,6 +48,7 @@ namespace Bitpanda2Parqet
             this.feeAsset = feeAsset;
             this.spread = spread;
             this.spreadCurrency = spreadCurrency;
+            isStaking = false;
         }
 
         public string ToParquetCsvString()
