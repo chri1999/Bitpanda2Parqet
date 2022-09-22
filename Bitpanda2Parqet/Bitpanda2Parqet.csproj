@@ -87,6 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
+    <Compile Include="MainViewParameters\MainViewSettingsParameters.cs" />
+    <Compile Include="MainViewParameters\MainViewSyncParameters.cs" />
     <Compile Include="Results\BitpandaApiResults.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="DataExchanger.cs" />
@@ -102,7 +104,7 @@
     <Compile Include="Results\ParqetApiResults.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MainViewParameters.cs" />
+    <Compile Include="MainViewParameters\MainViewParameters.cs" />
     <EmbeddedResource Include="MainView.resx">
       <DependentUpon>MainView.cs</DependentUpon>
     </EmbeddedResource>

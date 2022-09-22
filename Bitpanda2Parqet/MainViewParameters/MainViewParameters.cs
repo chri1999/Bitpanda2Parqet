@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bitpanda2Parqet
 {
+
     public class MainViewParameters
     {
         // An object of this class stores strings entered into the MainView textboxes
