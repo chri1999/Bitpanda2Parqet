@@ -91,26 +91,22 @@ namespace Bitpanda2Parqet
 
         public void SetInitValues(MainViewParameters init)
         {
-            txbFileName.Text = init.FileName;
-            txbFilePath.Text = init.FilePath;
-            txbBitpandaAPI.Text = init.API;
-            txbParqetAcc.Text = init.ParqetAcc;
-            txbParqetToken.Text = init.ParqetToken;
-            cbxExportFormat.SelectedItem = init.ExportFormat;
-            dtpDataFromDate.Value = init.DateOfOldestData;
-            clbGenerellSettings.SetItemChecked(0, init.IgnoreStaking);
+            txbFileName.Text = init.Sync.FileName;
+            txbFilePath.Text = init.Sync.FilePath;
+            txbBitpandaAPI.Text = init.Sync.API;
+            txbParqetAcc.Text = init.Sync.ParqetAcc;
+            txbParqetToken.Text = init.Sync.ParqetToken;
+            cbxExportFormat.SelectedItem = init.Settings.ExportFormat;
+            dtpDataFromDate.Value = init.Settings.DateOfOldestData;
+            clbGenerellSettings.SetItemChecked(0, init.Settings.IgnoreStaking);
         }
 
         private MainViewParameters GetMainViewParameters()
         { 
-        return new MainViewParameters(txbBitpandaAPI.Text,
-            txbFilePath.Text,
-            txbFileName.Text,
-            txbParqetAcc.Text,
-            txbParqetToken.Text,
-            (Enums.ExportFormat)cbxExportFormat.SelectedItem,
-            dtpDataFromDate.Value,
-            clbGenerellSettings.GetItemCheckState(0) == CheckState.Checked);
+            MainViewSyncParameters parameters = new MainViewSyncParameters(txbBitpandaAPI.Text, txbFilePath.Text, txbFileName.Text, txbParqetAcc.Text, txbParqetToken.Text);
+            MainViewSettingsParameters settings = new MainViewSettingsParameters((Enums.ExportFormat)cbxExportFormat.SelectedItem, dtpDataFromDate.Value, clbGenerellSettings.GetItemCheckState(0) == CheckState.Checked);
+
+            return new MainViewParameters(parameters, settings);
         }
 
         private void btnSaveInitSettings_Click(object sender, EventArgs e)

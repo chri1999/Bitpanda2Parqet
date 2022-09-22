@@ -11,26 +11,15 @@ namespace Bitpanda2Parqet
     {
         // An object of this class stores strings entered into the MainView textboxes
 
-        public string API { get; set; }
-        public string FilePath { get; set; }
-        public string FileName { get; set; }
-        public string ParqetAcc { get; set; }
-        public string ParqetToken { get; set; }
-        public Enums.ExportFormat ExportFormat { get; set; }
-        public DateTime DateOfOldestData { get; set; }
-        public bool IgnoreStaking { get; set; }
+        public MainViewSyncParameters Sync {get; set;}
+
+        public MainViewSettingsParameters Settings { get; set; }
 
 
-        public MainViewParameters(string aPI, string filePath,string fileName, string parqetAcc, string parqetToken, Enums.ExportFormat exportFormat, DateTime dateOfOldestData, bool ignoreStaking)
+        public MainViewParameters(MainViewSyncParameters sync, MainViewSettingsParameters settings)
         {
-            API = aPI;
-            FilePath = filePath;
-            ParqetAcc = parqetAcc;
-            ParqetToken = parqetToken;
-            ExportFormat = exportFormat;
-            DateOfOldestData = dateOfOldestData;
-            IgnoreStaking = ignoreStaking;
-            FileName = fileName;
+            Sync = sync;
+            Settings = settings;
         }
 
     }

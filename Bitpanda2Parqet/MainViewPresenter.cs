@@ -65,7 +65,7 @@ namespace Bitpanda2Parqet
             try
             {
                 MainViewParameters info = (MainViewParameters)e.Argument;
-                DataExchanger.UploadDataToParqetAPI(_dataModel.activities, info.ParqetAcc, info.ParqetToken, _worker, _results).Wait();
+                DataExchanger.UploadDataToParqetAPI(_dataModel.activities, info.Sync.ParqetAcc, info.Sync.ParqetToken, _worker, _results).Wait();
                 MainView.ShowTextMessage(_results.ToString()); 
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace Bitpanda2Parqet
             {
                 if (!_worker.IsBusy)
                 {
-                    _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.API, out BitpandaApiResults result));
+                    _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.Sync.API, out BitpandaApiResults result));
                     MainView.ShowTextMessage(result.ToString());
                     _worker.RunWorkerAsync(e);
                 }
@@ -105,9 +105,9 @@ namespace Bitpanda2Parqet
         {
             try
             {
-                _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.API, out BitpandaApiResults result));
+                _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.Sync.API, out BitpandaApiResults result));
                 MainView.ShowTextMessage(result.ToString());
-                _dataModel.ExportParqetCSV(e.FilePath);
+                _dataModel.ExportParqetCSV(e.Sync.FilePath);
                 _mainView.SetProgress(100);
                 MainView.ShowTextMessage("Laden abgeschlossen!");
             }

@@ -23,8 +23,7 @@ namespace Bitpanda2Parqet
         {
             if (!File.Exists(@"..\..\init.txt"))
             {
-                
-                return new MainViewParameters("", "", "", "", "", Enums.ExportFormat.Parqet, DateTime.MinValue, true);
+                return new MainViewParameters(new MainViewSyncParameters("", "", "", "", ""), new MainViewSettingsParameters(Enums.ExportFormat.Parqet, DateTime.MinValue, true));
             }
 
             string[] text = File.ReadAllLines(@"..\..\init.txt");
@@ -55,20 +54,20 @@ namespace Bitpanda2Parqet
                 if (splittedText[0] == "IgnoreStaking") bool.TryParse(splittedText[1], out ignoreStaking);
                 
             }
-            return new MainViewParameters(bitpandaApi, filePath, fileName, parqetAcc, parqetToken, exportFormat, dateOfOldestData, ignoreStaking);
+            return new MainViewParameters(new MainViewSyncParameters(bitpandaApi, filePath, fileName, parqetAcc, parqetToken), new MainViewSettingsParameters(exportFormat, dateOfOldestData, ignoreStaking));
         }
 
         public static void SaveInitValues(MainViewParameters init)
         {
             string[] content = new string[8];
-            content[0] = "Filename=" + init.FileName;
-            content[1] = "Filepath=" + init.FilePath;
-            content[2] = "Api=" + init.API;
-            content[3] = "Acc=" + init.ParqetAcc;
-            content[4] = "Token=" + init.ParqetToken;
-            content[5] = "ExportFormat=" + init.ExportFormat.ToString();
-            content[6] = "MinDate=" + init.DateOfOldestData.ToShortDateString();
-            content[7] = "IgnoreStaking=" + init.IgnoreStaking.ToString();
+            content[0] = "Filename=" + init.Sync.FileName;
+            content[1] = "Filepath=" + init.Sync.FilePath;
+            content[2] = "Api=" + init.Sync.API;
+            content[3] = "Acc=" + init.Sync.ParqetAcc;
+            content[4] = "Token=" + init.Sync.ParqetToken;
+            content[5] = "ExportFormat=" + init.Settings.ExportFormat.ToString();
+            content[6] = "MinDate=" + init.Settings.DateOfOldestData.ToShortDateString();
+            content[7] = "IgnoreStaking=" + init.Settings.IgnoreStaking.ToString();
 
             File.WriteAllLines(@"..\..\init.txt", content);
         }
