@@ -29,7 +29,12 @@ namespace Bitpanda2Parqet
 
         public void ExportParqetCSV(MainViewParameters parameters)
         {
-            DataExchanger.ExportParquetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
+            DataExchanger.ExportParqetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
+        }
+
+        public void ExportPortfolioPerformanceCSV(MainViewParameters parameters)
+        {
+            DataExchanger.ExportParqetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
         }
 
         public List<Activity> GetFilteredActivityList(MainViewSettingsParameters settings)
@@ -39,7 +44,7 @@ namespace Bitpanda2Parqet
             filtered.AddRange(
             from n in _activities
             where
-            n.timestamp > settings.DateOfOldestData &&
+            n.timestamp >= settings.DateOfOldestData &&
             ((settings.IgnoreStaking == true && n.isStaking == false) ||
             settings.IgnoreStaking == false)
             select n);

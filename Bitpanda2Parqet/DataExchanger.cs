@@ -18,7 +18,6 @@ namespace Bitpanda2Parqet
     public class DataExchanger
     {
         // This class is used to to interact with the local filesystem and the Api's of Bitpanda and Parqet
-        // To Do: Improve parsing of Bitpanda data!! -> BitpandaJsonParse + ParseBitpandaTrade etc.
 
         public static List<Activity> DownloadDataFromBitpandaAPI(string aPIKey, out BitpandaApiResults result)
         {
@@ -85,7 +84,28 @@ namespace Bitpanda2Parqet
             return records;
         }
 
-        public static void ExportParquetCSV(List<Activity> activities, string filePath, string fileName)
+        public static void ExportParqetCSV(List<Activity> activities, string filePath, string fileName)
+        {
+            try
+            {
+                filePath = filePath + @"\" + fileName;
+                if (!filePath.EndsWith(".csv")) filePath += ".csv";
+
+                StreamWriter writer = new StreamWriter(filePath);
+                writer.WriteLine("datetime;price;shares;amount;tax;fee;type;assettype;identifier;currency");
+                for (int i = 0; i < activities.Count; i++)
+                {
+                    writer.WriteLine(activities[i].ToParquetCsvString());
+                }
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Writing process failed");
+            }
+        }
+
+        public static void ExportPortfolioPerformanceCSV(List<Activity> activities, string filePath, string fileName)
         {
             try
             {

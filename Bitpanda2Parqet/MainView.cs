@@ -14,8 +14,8 @@ namespace Bitpanda2Parqet
 {
     public partial class MainView : Form
     {
-        public event EventHandler<MainViewParameters> ParquetExportRequested;
-        public event EventHandler<MainViewParameters> ParquetSynchRequested;
+        public event EventHandler<MainViewParameters> CSVExportRequested;
+        public event EventHandler<MainViewParameters> ParquetSyncRequested;
         public event EventHandler LoadInitRequested;
         public event EventHandler<MainViewParameters> SaveInitRequested;
 
@@ -41,7 +41,7 @@ namespace Bitpanda2Parqet
             }
             else
             {
-                ParquetExportRequested?.Invoke(this, GetMainViewParameters());
+                CSVExportRequested?.Invoke(this, GetMainViewParameters());
             }
 
         }
@@ -69,7 +69,7 @@ namespace Bitpanda2Parqet
             MessageBox.Show(message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void btnParqetSynch_Click(object sender, EventArgs e)
+        private void btnParqetSync_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrWhiteSpace(txbBitpandaAPI.Text))
             {
@@ -85,7 +85,7 @@ namespace Bitpanda2Parqet
             }
             else
             {
-                ParquetSynchRequested?.Invoke(this, GetMainViewParameters());
+                ParquetSyncRequested?.Invoke(this, GetMainViewParameters());
             }
         }
 

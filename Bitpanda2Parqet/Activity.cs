@@ -57,6 +57,13 @@ namespace Bitpanda2Parqet
                 ";" + fee + ";" + transactionType + ";" + "Crypto" + ";" + asset + ";" + assetMarketCurrency;
         }
 
+        public string ToPortfolioPerformanceCsvString()
+        {
+            return timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + assetMarketPrice.ToString() + ";" + amountAsset.ToString() + ";" + "" + ";" + "0" +
+                ";" + fee + ";" + transactionType + ";" + "Crypto" + ";" + asset + ";" + assetMarketCurrency;
+        }
+
+
         public string ToParqetApiString(string parqetAcc)
         {
             string dataString = string.Format("[{{\"type\":\"{0}\",\"holding\":\"\",\"datetime\":\"{1}\",\"description\":\"\",\"currency\":\"EUR\",\"price\":{2},\"shares\":{3},\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{{\"identifier\":\"{4},\"assetType\":\"Crypto\"}},\"portfolio\":\"{5}\"}}]",

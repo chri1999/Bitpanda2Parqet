@@ -163,7 +163,7 @@
             this.btnParqetSynch.TabIndex = 12;
             this.btnParqetSynch.Text = "Parqet API Synchronisation";
             this.btnParqetSynch.UseVisualStyleBackColor = true;
-            this.btnParqetSynch.Click += new System.EventHandler(this.btnParqetSynch_Click);
+            this.btnParqetSynch.Click += new System.EventHandler(this.btnParqetSync_Click);
             // 
             // txbParqetToken
             // 

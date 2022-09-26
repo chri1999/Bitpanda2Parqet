@@ -18,7 +18,7 @@ namespace Bitpanda2Parqet
         private MainView _mainView;
         private DataModel _dataModel;
         private BackgroundWorker _worker;
-        private ParqetApiResults _results;
+        private ParqetApiResults _parqetApiResults;
 
 
         public MainViewPresenter(MainView mainView)
@@ -26,13 +26,13 @@ namespace Bitpanda2Parqet
             _mainView = mainView;
             _dataModel = new DataModel(new List<Activity>());
             _worker = new BackgroundWorker();
-            _results = new ParqetApiResults(0,0,0,0,0);
+            _parqetApiResults = new ParqetApiResults(0,0,0,0,0);
 
             _worker.WorkerReportsProgress = true;
             _worker.WorkerSupportsCancellation = true;
 
-            _mainView.ParquetExportRequested += new EventHandler<MainViewParameters>(OnParqetExportRequested);
-            _mainView.ParquetSynchRequested += new EventHandler<MainViewParameters>(OnParqetSyncRequested);
+            _mainView.CSVExportRequested += new EventHandler<MainViewParameters>(OnCSVExportRequested);
+            _mainView.ParquetSyncRequested += new EventHandler<MainViewParameters>(OnParqetSyncRequested);
             _mainView.LoadInitRequested += new EventHandler(OnLoadInitRequested);
             _mainView.SaveInitRequested += new EventHandler<MainViewParameters>(OnSaveInitRequested);
             _worker.DoWork += new DoWorkEventHandler(OnDoWork);
@@ -65,8 +65,8 @@ namespace Bitpanda2Parqet
             try
             {
                 MainViewParameters info = (MainViewParameters)e.Argument;
-                DataExchanger.UploadDataToParqetAPI(_dataModel.GetFilteredActivityList(info.Settings), info.Sync.ParqetAcc, info.Sync.ParqetToken, _worker, _results).Wait();
-                MainView.ShowTextMessage(_results.ToString()); 
+                DataExchanger.UploadDataToParqetAPI(_dataModel.GetFilteredActivityList(info.Settings), info.Sync.ParqetAcc, info.Sync.ParqetToken, _worker, _parqetApiResults).Wait();
+                MainView.ShowTextMessage(_parqetApiResults.ToString()); 
             }
             catch (Exception ex)
             {
@@ -101,7 +101,7 @@ namespace Bitpanda2Parqet
             }
         }
 
-        private void OnParqetExportRequested(object sender, MainViewParameters e)
+        private void OnCSVExportRequested(object sender, MainViewParameters e)
         {
             try
             {
