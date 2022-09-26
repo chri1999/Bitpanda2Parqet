@@ -58,7 +58,7 @@ namespace Bitpanda2Parqet
                 else if (typeOfActivity == Enums.ActivityType.OutgoingStake || typeOfActivity == Enums.ActivityType.IncomingStake)
                 {
                     records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"]));
-                    records[i].isStaking = true;
+                    records[i].IsStaking = true;
                     result.NumberOfStakes++;
                 }
                 else if (typeOfActivity == Enums.ActivityType.InstantTradeBonus)
@@ -149,7 +149,7 @@ namespace Bitpanda2Parqet
                         { "Referer", "https://app.parqet.com/" },
                         { "Connection", "keep-alive" },
                     },
-                        Content = new StringContent("[{\"type\":\"" + char.ToUpper(activities[i].transactionType[0]) + activities[i].transactionType.Substring(1) + "\",\"holding\":\"\",\"datetime\":\"" + activities[i].timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "\",\"description\":\"\",\"currency\":\"EUR\",\"price\":" + activities[i].assetMarketPrice.ToString().Replace(',', '.') + ",\"shares\":" + activities[i].amountAsset.ToString().Replace(',', '.') + ",\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{\"identifier\":\"" + activities[i].asset + "\",\"assetType\":\"Crypto\"},\"portfolio\":\"" + parqetAcc + "\"}]")
+                        Content = new StringContent("[{\"type\":\"" + char.ToUpper(activities[i].TransactionType[0]) + activities[i].TransactionType.Substring(1) + "\",\"holding\":\"\",\"datetime\":\"" + activities[i].Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "\",\"description\":\"\",\"currency\":\"EUR\",\"price\":" + activities[i].AssetMarketPrice.ToString().Replace(',', '.') + ",\"shares\":" + activities[i].AmountAsset.ToString().Replace(',', '.') + ",\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{\"identifier\":\"" + activities[i].Asset + "\",\"assetType\":\"Crypto\"},\"portfolio\":\"" + parqetAcc + "\"}]")
                         {
                             Headers =
                         {

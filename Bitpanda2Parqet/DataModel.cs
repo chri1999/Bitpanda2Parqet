@@ -47,8 +47,8 @@ namespace Bitpanda2Parqet
             filtered.AddRange(
             from n in _activities
             where
-            n.timestamp >= settings.DateOfOldestData &&
-            ((settings.IgnoreStaking == true && n.isStaking == false) ||
+            n.Timestamp >= settings.DateOfOldestData &&
+            ((settings.IgnoreStaking == true && n.IsStaking == false) ||
             settings.IgnoreStaking == false)
             select n);
 
