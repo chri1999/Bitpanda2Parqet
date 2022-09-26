@@ -10,6 +10,8 @@ namespace Bitpanda2Parqet
     {
         public enum ExportFormat {Parqet, PortfolioPerformance }
 
+        public enum ActivityType { Buy, Sell, OutgoingStake, IncomingStake, InstantTradeBonus, incomingReward, BestFeeReduction, Undefined }
+
 
 
 
