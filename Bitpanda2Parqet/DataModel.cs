@@ -27,14 +27,17 @@ namespace Bitpanda2Parqet
             ModelChanged?.Invoke(this, new EventArgs());
         }
 
-        public void ExportParqetCSV(MainViewParameters parameters)
+        public void ExportFilteredCSV(MainViewParameters parameters)
         {
-            DataExchanger.ExportParqetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
-        }
+            if (parameters.Settings.ExportFormat == Enums.ExportFormat.Parqet)
+            {
+                DataExchanger.ExportParqetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
+            }
+            else if(parameters.Settings.ExportFormat == Enums.ExportFormat.PortfolioPerformance)
+            {
+                DataExchanger.ExportPortfolioPerformanceCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
+            }
 
-        public void ExportPortfolioPerformanceCSV(MainViewParameters parameters)
-        {
-            DataExchanger.ExportParqetCSV(GetFilteredActivityList(parameters.Settings), parameters.Sync.FilePath, parameters.Sync.FileName);
         }
 
         public List<Activity> GetFilteredActivityList(MainViewSettingsParameters settings)

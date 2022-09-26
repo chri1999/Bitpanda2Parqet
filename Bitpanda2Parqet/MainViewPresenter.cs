@@ -107,7 +107,7 @@ namespace Bitpanda2Parqet
             {
                 _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.Sync.API, out BitpandaApiResults result));
                 MainView.ShowTextMessage(result.ToString());
-                _dataModel.ExportParqetCSV(e);
+                _dataModel.ExportFilteredCSV(e);
                 _mainView.SetProgress(100);
                 MainView.ShowTextMessage("Laden abgeschlossen!");
             }

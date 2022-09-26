@@ -25,7 +25,7 @@ namespace Bitpanda2Parqet
         }
 
 
-        private void btnParqetExport_Click(object sender, EventArgs e)
+        private void btnCSVExport_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrWhiteSpace(txbFileName.Text))
             {

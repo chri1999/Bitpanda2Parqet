@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
-            this.btnParqetExport = new System.Windows.Forms.Button();
+            this.btnCSVExport = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txbBitpandaAPI = new System.Windows.Forms.TextBox();
             this.txbFilePath = new System.Windows.Forms.TextBox();
@@ -59,16 +59,16 @@
             this.tabPageSettings.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnParqetExport
+            // btnCSVExport
             // 
-            this.btnParqetExport.Location = new System.Drawing.Point(211, 225);
-            this.btnParqetExport.Margin = new System.Windows.Forms.Padding(2);
-            this.btnParqetExport.Name = "btnParqetExport";
-            this.btnParqetExport.Size = new System.Drawing.Size(110, 68);
-            this.btnParqetExport.TabIndex = 2;
-            this.btnParqetExport.Text = "CSV Export";
-            this.btnParqetExport.UseVisualStyleBackColor = true;
-            this.btnParqetExport.Click += new System.EventHandler(this.btnParqetExport_Click);
+            this.btnCSVExport.Location = new System.Drawing.Point(211, 225);
+            this.btnCSVExport.Margin = new System.Windows.Forms.Padding(2);
+            this.btnCSVExport.Name = "btnCSVExport";
+            this.btnCSVExport.Size = new System.Drawing.Size(110, 68);
+            this.btnCSVExport.TabIndex = 2;
+            this.btnCSVExport.Text = "CSV Export";
+            this.btnCSVExport.UseVisualStyleBackColor = true;
+            this.btnCSVExport.Click += new System.EventHandler(this.btnCSVExport_Click);
             // 
             // label1
             // 
@@ -237,7 +237,7 @@
             this.tabPageSync.Controls.Add(this.txbFilePath);
             this.tabPageSync.Controls.Add(this.btnSaveInitSettings);
             this.tabPageSync.Controls.Add(this.btnSelectPath);
-            this.tabPageSync.Controls.Add(this.btnParqetExport);
+            this.tabPageSync.Controls.Add(this.btnCSVExport);
             this.tabPageSync.Location = new System.Drawing.Point(4, 22);
             this.tabPageSync.Name = "tabPageSync";
             this.tabPageSync.Padding = new System.Windows.Forms.Padding(3);
@@ -336,7 +336,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnParqetExport;
+        private System.Windows.Forms.Button btnCSVExport;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txbBitpandaAPI;
         private System.Windows.Forms.TextBox txbFilePath;
