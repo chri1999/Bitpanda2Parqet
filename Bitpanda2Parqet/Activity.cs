@@ -59,8 +59,7 @@ namespace Bitpanda2Parqet
 
         public string ToPortfolioPerformanceCsvString()
         {
-            return timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + assetMarketPrice.ToString() + ";" + amountAsset.ToString() + ";" + "" + ";" + "0" +
-                ";" + fee + ";" + transactionType + ";" + "Crypto" + ";" + asset + ";" + assetMarketCurrency;
+            return timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + assetMarketPrice.ToString();
         }
 
 

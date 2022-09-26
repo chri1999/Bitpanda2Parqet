@@ -116,7 +116,7 @@ namespace Bitpanda2Parqet
                 writer.WriteLine("datetime;price;shares;amount;tax;fee;type;assettype;identifier;currency");
                 for (int i = 0; i < activities.Count; i++)
                 {
-                    writer.WriteLine(activities[i].ToParquetCsvString());
+                    writer.WriteLine(activities[i].ToPortfolioPerformanceCsvString());
                 }
                 writer.Close();
             }
