@@ -66,7 +66,7 @@
             this.btnParqetExport.Name = "btnParqetExport";
             this.btnParqetExport.Size = new System.Drawing.Size(110, 68);
             this.btnParqetExport.TabIndex = 2;
-            this.btnParqetExport.Text = "Parqet CSV Export";
+            this.btnParqetExport.Text = "CSV Export";
             this.btnParqetExport.UseVisualStyleBackColor = true;
             this.btnParqetExport.Click += new System.EventHandler(this.btnParqetExport_Click);
             // 
@@ -161,7 +161,7 @@
             this.btnParqetSynch.Name = "btnParqetSynch";
             this.btnParqetSynch.Size = new System.Drawing.Size(234, 68);
             this.btnParqetSynch.TabIndex = 12;
-            this.btnParqetSynch.Text = "Parqet Synchronisation";
+            this.btnParqetSynch.Text = "Parqet API Synchronisation";
             this.btnParqetSynch.UseVisualStyleBackColor = true;
             this.btnParqetSynch.Click += new System.EventHandler(this.btnParqetSynch_Click);
             // 
@@ -278,14 +278,14 @@
             this.cbxExportFormat.Items.AddRange(new object[] {
             Bitpanda2Parqet.Enums.ExportFormat.Parqet,
             Bitpanda2Parqet.Enums.ExportFormat.PortfolioPerformance});
-            this.cbxExportFormat.Location = new System.Drawing.Point(50, 74);
+            this.cbxExportFormat.Location = new System.Drawing.Point(50, 66);
             this.cbxExportFormat.Name = "cbxExportFormat";
             this.cbxExportFormat.Size = new System.Drawing.Size(121, 21);
             this.cbxExportFormat.TabIndex = 5;
             // 
             // dtpDataFromDate
             // 
-            this.dtpDataFromDate.Location = new System.Drawing.Point(50, 167);
+            this.dtpDataFromDate.Location = new System.Drawing.Point(50, 153);
             this.dtpDataFromDate.Name = "dtpDataFromDate";
             this.dtpDataFromDate.Size = new System.Drawing.Size(200, 20);
             this.dtpDataFromDate.TabIndex = 4;
@@ -313,9 +313,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(47, 44);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(72, 13);
+            this.label6.Size = new System.Drawing.Size(75, 13);
             this.label6.TabIndex = 1;
-            this.label6.Text = "Export Format";
+            this.label6.Text = "Export Format:";
             // 
             // MainView
             // 
