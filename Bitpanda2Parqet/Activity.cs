@@ -28,9 +28,12 @@ namespace Bitpanda2Parqet
         public string FeeAsset { get; set; }
         public string Spread { get; set; }
         public string SpreadCurrency { get; set; }
+        public Enums.ActivityType InternalActivityType { get; set; }
         public bool IsStaking { get; set; }
 
-        public Activity(DateTime timestamp, string transactionType, double amountAsset, string asset, double assetMarketPrice, string assetMarketCurrency, double fee)
+
+
+        public Activity(DateTime timestamp, string transactionType, double amountAsset, string asset, double assetMarketPrice, string assetMarketCurrency, double fee, Enums.ActivityType internalActivityType)
         {
             this.Timestamp = timestamp;
             this.TransactionType = transactionType;
@@ -40,6 +43,7 @@ namespace Bitpanda2Parqet
             this.AssetMarketCurrency = assetMarketCurrency;
             this.Fee = fee;
             IsStaking = false;
+            InternalActivityType = internalActivityType;
         }
 
         public Activity(string transactionID, DateTime timestamp, string transactionType, string inOut, double amountFiat, string fiat, double amountAsset, string asset, double assetMarketPrice, string assetMarketCurrency, string assetClass, string productId, double fee, string feeAsset, string spread, string spreadCurrency)

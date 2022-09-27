@@ -43,6 +43,7 @@ namespace Bitpanda2Parqet
             for (int i = 0; i < jsonData["data"].Count(); i++)
             {
                 typeOfActivity = IdentifySortOfActivity(jsonData["data"][i]);
+                records[i].InternalActivityType = typeOfActivity;
                 result.NumberOfDataSets++;
 
                 if (typeOfActivity == Enums.ActivityType.Buy)
