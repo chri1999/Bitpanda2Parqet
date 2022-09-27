@@ -60,7 +60,7 @@ namespace Bitpanda2Parqet
             else ppType = "Not implemented yet";
             
 
-            return Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + ppType + ";"+ Asset.AssetMarketPrice.ToString() + ";" + Fiat.Fiat + ";" + Asset.AmountAsset.ToString() + ";" + Asset.AssetMarketPrice.ToString() + ";" + Asset.AssetMarketCurrency  ;
+            return Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + ppType + ";"+ (Asset.AssetMarketPrice * Asset.AmountAsset).ToString() + ";" + Fiat.Fiat + ";" + Asset.AmountAsset.ToString() + ";" + Asset.Asset + "-EUR" + ";" + Asset.AssetMarketPrice.ToString() + ";" + Asset.AssetMarketCurrency  ;
         }
 
         public string ToParqetApiString(string parqetAcc)
