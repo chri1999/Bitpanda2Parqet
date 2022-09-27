@@ -43,7 +43,6 @@ namespace Bitpanda2Parqet
             for (int i = 0; i < jsonData["data"].Count(); i++)
             {
                 typeOfActivity = IdentifySortOfActivity(jsonData["data"][i]);
-                records[i].InternalActivityType = typeOfActivity;
                 result.NumberOfDataSets++;
 
                 if (typeOfActivity == Enums.ActivityType.Buy)
@@ -80,7 +79,8 @@ namespace Bitpanda2Parqet
                 else
                 {
                     result.NumberOfUnknownCalls++;  // add errorlog 
-                }               
+                }
+                records[i].InternalActivityType = typeOfActivity;
             }
             return records;
         }
@@ -150,7 +150,7 @@ namespace Bitpanda2Parqet
                         { "Referer", "https://app.parqet.com/" },
                         { "Connection", "keep-alive" },
                     },
-                        Content = new StringContent("[{\"type\":\"" + char.ToUpper(activities[i].TransactionType[0]) + activities[i].TransactionType.Substring(1) + "\",\"holding\":\"\",\"datetime\":\"" + activities[i].Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "\",\"description\":\"\",\"currency\":\"EUR\",\"price\":" + activities[i].AssetMarketPrice.ToString().Replace(',', '.') + ",\"shares\":" + activities[i].AmountAsset.ToString().Replace(',', '.') + ",\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{\"identifier\":\"" + activities[i].Asset + "\",\"assetType\":\"Crypto\"},\"portfolio\":\"" + parqetAcc + "\"}]")
+                        Content = new StringContent("[{\"type\":\"" + char.ToUpper(activities[i].TransactionType[0]) + activities[i].TransactionType.Substring(1) + "\",\"holding\":\"\",\"datetime\":\"" + activities[i].Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "\",\"description\":\"\",\"currency\":\"EUR\",\"price\":" + activities[i].Asset.AssetMarketPrice.ToString().Replace(',', '.') + ",\"shares\":" + activities[i].Asset.AmountAsset.ToString().Replace(',', '.') + ",\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{\"identifier\":\"" + activities[i].Asset.Asset + "\",\"assetType\":\"Crypto\"},\"portfolio\":\"" + parqetAcc + "\"}]")
                         {
                             Headers =
                         {

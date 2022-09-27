@@ -86,7 +86,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activity.cs" />
+    <Compile Include="Activities\Activity.cs" />
+    <Compile Include="Activities\ActivityAsset.cs" />
+    <Compile Include="Activities\ActivityFiat.cs" />
+    <Compile Include="Activities\ActivityFees.cs" />
+    <Compile Include="Activities\ActivityBitpandaIDs.cs" />
     <Compile Include="MainViewParameters\MainViewSettingsParameters.cs" />
     <Compile Include="MainViewParameters\MainViewSyncParameters.cs" />
     <Compile Include="Results\BitpandaApiResults.cs" />
@@ -132,5 +136,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
