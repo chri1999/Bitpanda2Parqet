@@ -54,7 +54,13 @@ namespace Bitpanda2Parqet
 
         public string ToPortfolioPerformanceCsvString()
         {
-            return Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + Asset.AssetMarketPrice.ToString();
+            string ppType = "";
+            if (InternalActivityType == Enums.ActivityType.Buy) ppType = "Kaufen";
+            else if (InternalActivityType == Enums.ActivityType.Sell) ppType = "Verkaufen";
+            else ppType = "Not implemented yet";
+            
+
+            return Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'") + ";" + ppType + ";"+ Asset.AssetMarketPrice.ToString() + ";" + Fiat.Fiat + ";" + Asset.AmountAsset.ToString() + ";" + Asset.AssetMarketPrice.ToString() + ";" + Asset.AssetMarketCurrency  ;
         }
 
         public string ToParqetApiString(string parqetAcc)
