@@ -18,7 +18,7 @@ namespace Bitpanda2Parqet
         private MainView _mainView;
         private DataModel _dataModel;
         private BackgroundWorker _worker;
-        private ParqetApiResults _results;
+        private ParqetApiResults _parqetApiResults;
 
 
         public MainViewPresenter(MainView mainView)
@@ -26,15 +26,15 @@ namespace Bitpanda2Parqet
             _mainView = mainView;
             _dataModel = new DataModel(new List<Activity>());
             _worker = new BackgroundWorker();
-            _results = new ParqetApiResults(0,0,0,0,0);
+            _parqetApiResults = new ParqetApiResults(0,0,0,0,0);
 
             _worker.WorkerReportsProgress = true;
             _worker.WorkerSupportsCancellation = true;
 
-            _mainView.ParquetExportRequested += new EventHandler<RequiredExchangeInformation>(OnParqetExportRequested);
-            _mainView.ParquetSynchRequested += new EventHandler<RequiredExchangeInformation>(OnParqetSyncRequested);
+            _mainView.CSVExportRequested += new EventHandler<MainViewParameters>(OnCSVExportRequested);
+            _mainView.ParquetSyncRequested += new EventHandler<MainViewParameters>(OnParqetSyncRequested);
             _mainView.LoadInitRequested += new EventHandler(OnLoadInitRequested);
-            _mainView.SaveInitRequested += new EventHandler<FormInitializer>(OnSaveInitRequested);
+            _mainView.SaveInitRequested += new EventHandler<MainViewParameters>(OnSaveInitRequested);
             _worker.DoWork += new DoWorkEventHandler(OnDoWork);
             _worker.ProgressChanged += new ProgressChangedEventHandler(OnProgressChanged);
             _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OnRunWorkerCompleted);
@@ -64,9 +64,9 @@ namespace Bitpanda2Parqet
         {
             try
             {
-                RequiredExchangeInformation info = (RequiredExchangeInformation)e.Argument;
-                DataExchanger.UploadDataToParqetAPI(_dataModel.activities, info.ParqetAcc, info.ParqetToken, _worker, _results).Wait();
-                MainView.ShowTextMessage(_results.ToString()); 
+                MainViewParameters info = (MainViewParameters)e.Argument;
+                DataExchanger.UploadDataToParqetAPI(_dataModel.GetFilteredActivityList(info.Settings), info.Sync.ParqetAcc, info.Sync.ParqetToken, _worker, _parqetApiResults).Wait();
+                MainView.ShowTextMessage(_parqetApiResults.ToString()); 
             }
             catch (Exception ex)
             {
@@ -74,23 +74,23 @@ namespace Bitpanda2Parqet
             }          
         }
 
-        private void OnSaveInitRequested(object sender, FormInitializer e)
+        private void OnSaveInitRequested(object sender, MainViewParameters e)
         {
             FormInitializer.SaveInitValues(e);
         }
 
         private void OnLoadInitRequested(object sender, EventArgs e)
         {
-            _mainView.SetInitValues(FormInitializer.GetMainViewInitValues());
+            _mainView.SetInitValues(FormInitializer.ReadMainViewInitValues());
         }
 
-        private void OnParqetSyncRequested(object sender, RequiredExchangeInformation e)
+        private void OnParqetSyncRequested(object sender, MainViewParameters e)
         {
             try
             {
                 if (!_worker.IsBusy)
                 {
-                    _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.API, out BitpandaApiResults result));
+                    _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.Sync.API, out BitpandaApiResults result));
                     MainView.ShowTextMessage(result.ToString());
                     _worker.RunWorkerAsync(e);
                 }
@@ -101,13 +101,13 @@ namespace Bitpanda2Parqet
             }
         }
 
-        private void OnParqetExportRequested(object sender, RequiredExchangeInformation e)
+        private void OnCSVExportRequested(object sender, MainViewParameters e)
         {
             try
             {
-                _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.API, out BitpandaApiResults result));
+                _dataModel.SetNewDataList(DataExchanger.DownloadDataFromBitpandaAPI(e.Sync.API, out BitpandaApiResults result));
                 MainView.ShowTextMessage(result.ToString());
-                _dataModel.ExportParqetCSV(e.FilePath);
+                _dataModel.ExportFilteredCSV(e);
                 _mainView.SetProgress(100);
                 MainView.ShowTextMessage("Laden abgeschlossen!");
             }

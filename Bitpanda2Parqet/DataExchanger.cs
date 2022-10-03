@@ -18,7 +18,6 @@ namespace Bitpanda2Parqet
     public class DataExchanger
     {
         // This class is used to to interact with the local filesystem and the Api's of Bitpanda and Parqet
-        // To Do: Improve parsing of Bitpanda data!! -> BitpandaJsonParse + ParseBitpandaTrade etc.
 
         public static List<Activity> DownloadDataFromBitpandaAPI(string aPIKey, out BitpandaApiResults result)
         {
@@ -38,7 +37,7 @@ namespace Bitpanda2Parqet
 
         private static List<Activity> ParseActivitiesFromJson(JObject jsonData, out BitpandaApiResults result)
         {
-            string typeOfActivity = "";
+            Enums.ActivityType typeOfActivity;
             result = new BitpandaApiResults(0, 0, 0, 0, 0, 0);
             var records = new List<Activity>();
             for (int i = 0; i < jsonData["data"].Count(); i++)
@@ -46,32 +45,33 @@ namespace Bitpanda2Parqet
                 typeOfActivity = IdentifySortOfActivity(jsonData["data"][i]);
                 result.NumberOfDataSets++;
 
-                if (typeOfActivity == "buy")
+                if (typeOfActivity == Enums.ActivityType.Buy)
                 {
                     records.Add(Activity.ParseBuyOrSell(jsonData["data"][i]["attributes"]));
                     result.NumberOfBuys++;
                 }
-                else if (typeOfActivity == "sell")
+                else if (typeOfActivity == Enums.ActivityType.Sell)
                 {
                     records.Add(Activity.ParseBuyOrSell(jsonData["data"][i]["attributes"]));
                     result.NumberOfSells++;
                 }
-                else if (typeOfActivity == "outgoingStake" || typeOfActivity == "incomingStake")
+                else if (typeOfActivity == Enums.ActivityType.OutgoingStake || typeOfActivity == Enums.ActivityType.IncomingStake)
                 {
-                    //records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"])); //ignore stakes
+                    records.Add(Activity.ParseStake(jsonData["data"][i]["attributes"]));
+                    records[i].IsStaking = true;
                     result.NumberOfStakes++;
                 }
-                else if (typeOfActivity == "instantTradeBonus")
+                else if (typeOfActivity == Enums.ActivityType.InstantTradeBonus)
                 {
                     records.Add(Activity.ParseInstantTradeBonus(jsonData["data"][i]["attributes"]));
                     result.NumberOfBestBonuses++;
                 }
-                else if (typeOfActivity == "incomingReward")
+                else if (typeOfActivity == Enums.ActivityType.incomingReward)
                 {
                     records.Add(Activity.ParseReward(jsonData["data"][i]["attributes"]));
                     result.NumberOfBestBonuses++;
                 }
-                else if (typeOfActivity == "bestFeeReduction")
+                else if (typeOfActivity == Enums.ActivityType.BestFeeReduction)
                 {
                     records.Add(Activity.ParseBestFeeReduction(jsonData["data"][i]["attributes"]));
                     result.NumberOfBestBonuses++;
@@ -79,15 +79,17 @@ namespace Bitpanda2Parqet
                 else
                 {
                     result.NumberOfUnknownCalls++;  // add errorlog 
-                }               
+                }
+                records[i].InternalActivityType = typeOfActivity;
             }
             return records;
         }
 
-        public static void ExportParquetCSV(List<Activity> activities, string filePath)
+        public static void ExportParqetCSV(List<Activity> activities, string filePath, string fileName)
         {
             try
             {
+                filePath = filePath + @"\" + fileName;
                 if (!filePath.EndsWith(".csv")) filePath += ".csv";
 
                 StreamWriter writer = new StreamWriter(filePath);
@@ -95,6 +97,27 @@ namespace Bitpanda2Parqet
                 for (int i = 0; i < activities.Count; i++)
                 {
                     writer.WriteLine(activities[i].ToParquetCsvString());
+                }
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Writing process failed");
+            }
+        }
+
+        public static void ExportPortfolioPerformanceCSV(List<Activity> activities, string filePath, string fileName)
+        {
+            try
+            {
+                filePath = filePath + @"\" + fileName;
+                if (!filePath.EndsWith(".csv")) filePath += ".csv";
+
+                StreamWriter writer = new StreamWriter(filePath);
+                writer.WriteLine("Datum;Typ;Wert;Buchungswährung;Stück;Ticker-Symbol;Bruttobetrag;Währung Bruttobetrag");
+                for (int i = 0; i < activities.Count; i++)
+                {
+                    writer.WriteLine(activities[i].ToPortfolioPerformanceCsvString());
                 }
                 writer.Close();
             }
@@ -127,7 +150,7 @@ namespace Bitpanda2Parqet
                         { "Referer", "https://app.parqet.com/" },
                         { "Connection", "keep-alive" },
                     },
-                        Content = new StringContent("[{\"type\":\"" + char.ToUpper(activities[i].transactionType[0]) + activities[i].transactionType.Substring(1) + "\",\"holding\":\"\",\"datetime\":\"" + activities[i].timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "\",\"description\":\"\",\"currency\":\"EUR\",\"price\":" + activities[i].assetMarketPrice.ToString().Replace(',', '.') + ",\"shares\":" + activities[i].amountAsset.ToString().Replace(',', '.') + ",\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{\"identifier\":\"" + activities[i].asset + "\",\"assetType\":\"Crypto\"},\"portfolio\":\"" + parqetAcc + "\"}]")
+                        Content = new StringContent("[{\"type\":\"" + char.ToUpper(activities[i].TransactionType[0]) + activities[i].TransactionType.Substring(1) + "\",\"holding\":\"\",\"datetime\":\"" + activities[i].Timestamp.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'") + "\",\"description\":\"\",\"currency\":\"EUR\",\"price\":" + activities[i].Asset.AssetMarketPrice.ToString().Replace(',', '.') + ",\"shares\":" + activities[i].Asset.AmountAsset.ToString().Replace(',', '.') + ",\"fee\":0,\"tax\":0,\"allowDuplicate\":false,\"asset\":{\"identifier\":\"" + activities[i].Asset.Asset + "\",\"assetType\":\"Crypto\"},\"portfolio\":\"" + parqetAcc + "\"}]")
                         {
                             Headers =
                         {
@@ -162,30 +185,30 @@ namespace Bitpanda2Parqet
             return client.DownloadString("https://api.bitpanda.com/v1/wallets/transactions?page=1&page_size=500");
         }
 
-        private static string IdentifySortOfActivity(JToken obj)
+        private static Enums.ActivityType IdentifySortOfActivity(JToken obj)
         {
-            string sortOfActivity = "undefined";
+            Enums.ActivityType sortOfActivity = Enums.ActivityType.Undefined;
 
             if (obj["attributes"]["type"].ToString() == "withdrawal" &&
-                obj["attributes"]["is_bfc"].ToString() == "True") sortOfActivity = "bestFeeReduction";
+                obj["attributes"]["is_bfc"].ToString() == "True") sortOfActivity = Enums.ActivityType.BestFeeReduction;
 
-            else if (obj["attributes"]["type"].ToString() == "buy") sortOfActivity = "buy";
+            else if (obj["attributes"]["type"].ToString() == "buy") sortOfActivity = Enums.ActivityType.Buy;
 
-            else if (obj["attributes"]["type"].ToString() == "sell") sortOfActivity = "sell";
+            else if (obj["attributes"]["type"].ToString() == "sell") sortOfActivity = Enums.ActivityType.Sell;
 
             if (obj["attributes"]["tags"].Count() > 0)
             {
                 if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
-                         obj["attributes"]["in_or_out"].ToString() == "outgoing") sortOfActivity = "outgoingStake";
+                         obj["attributes"]["in_or_out"].ToString() == "outgoing") sortOfActivity = Enums.ActivityType.OutgoingStake;
 
                 else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Stake" &&
-                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingStake";
+                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = Enums.ActivityType.IncomingStake;
 
                 else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Instant Trade Bonus" &&
-                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "instantTradeBonus";
+                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = Enums.ActivityType.InstantTradeBonus;
 
                 else if (obj["attributes"]["tags"][0]["attributes"]["name"].ToString() == "Reward" &&
-                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = "incomingReward";
+                         obj["attributes"]["in_or_out"].ToString() == "incoming") sortOfActivity = Enums.ActivityType.IncomingStake;
             }
 
 
