@@ -23,7 +23,7 @@ namespace Bitpanda2Parqet
         {
             if (!File.Exists(@"..\..\init.txt"))
             {
-                return new MainViewParameters(new MainViewSyncParameters("", "", "", "", ""), new MainViewSettingsParameters(Enums.ExportFormat.Parqet, DateTime.MinValue, true));
+                return new MainViewParameters(new MainViewSyncParameters("", "", "", "", ""), new MainViewSettingsParameters(Enums.ExportFormat.Parqet, DateTime.Now, true));
             }
 
             string[] text = File.ReadAllLines(@"..\..\init.txt");
